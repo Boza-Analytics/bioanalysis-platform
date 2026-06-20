@@ -37,6 +37,7 @@ def _load_config() -> dict:
         "frangi_sigmas": [1, 2, 3, 4],
         "sam_threshold": 0.35,
         "nms_iou": 0.5,
+        "sam_prompt": "thin line",
         "min_tnt_length_px": 25,
         "max_tnt_length_px": 1200,
         "straightness_min": 0.6,
@@ -144,7 +145,7 @@ def run_tnt(
         runner = get_runner()
     seg = runner.predict(
         frangi_path,
-        prompt="thin line",
+        prompt=cfg.get("sam_prompt", "thin line"),
         threshold=cfg["sam_threshold"],
         nms_iou=cfg["nms_iou"],
     )

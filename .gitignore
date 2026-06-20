@@ -1,8 +1,11 @@
 __pycache__/
 *.pyc
-.venv/
-.venv-test/
+.venv*/
 *.egg-info/
+
+# generated raw outputs / eval artifacts (keep the curated dataset in train/data/tnt)
+train/data/tnt/eval_overlays/
+train/data/tnt/eval_report.json
 
 # Heavy upstream sources — re-cloned by scripts/setup_ec2.sh on deploy
 submodules/

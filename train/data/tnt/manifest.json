@@ -1,0 +1,554 @@
+[
+  {
+    "id": "tnt000_0007",
+    "image": "images/tnt000_0007.png",
+    "mask": "masks/tnt000_0007.png",
+    "overlay": "overlays/tnt000_0007.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      24.0,
+      28.0,
+      215.0,
+      75.0,
+      211.0,
+      186.0,
+      111.0
+    ],
+    "lengths_um": [
+      2.4,
+      2.8,
+      21.5,
+      7.5,
+      21.1,
+      18.6,
+      11.1
+    ]
+  },
+  {
+    "id": "tnt000_0009",
+    "image": "images/tnt000_0009.png",
+    "mask": "masks/tnt000_0009.png",
+    "overlay": "overlays/tnt000_0009.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      23.0,
+      28.0,
+      217.0,
+      76.0,
+      219.0,
+      192.0,
+      114.0
+    ],
+    "lengths_um": [
+      2.3,
+      2.8,
+      21.7,
+      7.6,
+      21.9,
+      19.2,
+      11.4
+    ]
+  },
+  {
+    "id": "tnt000_0011",
+    "image": "images/tnt000_0011.png",
+    "mask": "masks/tnt000_0011.png",
+    "overlay": "overlays/tnt000_0011.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      23.0,
+      31.0,
+      215.0,
+      77.0,
+      227.0,
+      199.0,
+      116.0
+    ],
+    "lengths_um": [
+      2.3,
+      3.1,
+      21.5,
+      7.7,
+      22.7,
+      19.9,
+      11.6
+    ]
+  },
+  {
+    "id": "tnt001_0007",
+    "image": "images/tnt001_0007.png",
+    "mask": "masks/tnt001_0007.png",
+    "overlay": "overlays/tnt001_0007.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 4,
+    "lengths_px": [
+      198.0,
+      181.0,
+      256.0,
+      113.0
+    ],
+    "lengths_um": [
+      19.8,
+      18.1,
+      25.6,
+      11.3
+    ]
+  },
+  {
+    "id": "tnt001_0009",
+    "image": "images/tnt001_0009.png",
+    "mask": "masks/tnt001_0009.png",
+    "overlay": "overlays/tnt001_0009.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 4,
+    "lengths_px": [
+      202.0,
+      187.0,
+      257.0,
+      113.0
+    ],
+    "lengths_um": [
+      20.2,
+      18.7,
+      25.7,
+      11.3
+    ]
+  },
+  {
+    "id": "tnt001_0011",
+    "image": "images/tnt001_0011.png",
+    "mask": "masks/tnt001_0011.png",
+    "overlay": "overlays/tnt001_0011.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 4,
+    "lengths_px": [
+      209.0,
+      191.0,
+      258.0,
+      113.0
+    ],
+    "lengths_um": [
+      20.9,
+      19.1,
+      25.8,
+      11.3
+    ]
+  },
+  {
+    "id": "tnt002_0007",
+    "image": "images/tnt002_0007.png",
+    "mask": "masks/tnt002_0007.png",
+    "overlay": "overlays/tnt002_0007.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      31.0,
+      219.0,
+      207.0,
+      343.0,
+      217.0,
+      155.0,
+      30.0
+    ],
+    "lengths_um": [
+      3.1,
+      21.9,
+      20.7,
+      34.3,
+      21.7,
+      15.5,
+      3.0
+    ]
+  },
+  {
+    "id": "tnt002_0009",
+    "image": "images/tnt002_0009.png",
+    "mask": "masks/tnt002_0009.png",
+    "overlay": "overlays/tnt002_0009.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      34.0,
+      224.0,
+      212.0,
+      347.0,
+      223.0,
+      161.0,
+      30.0
+    ],
+    "lengths_um": [
+      3.4,
+      22.4,
+      21.2,
+      34.7,
+      22.3,
+      16.1,
+      3.0
+    ]
+  },
+  {
+    "id": "tnt002_0011",
+    "image": "images/tnt002_0011.png",
+    "mask": "masks/tnt002_0011.png",
+    "overlay": "overlays/tnt002_0011.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      34.0,
+      233.0,
+      215.0,
+      354.0,
+      228.0,
+      165.0,
+      29.0
+    ],
+    "lengths_um": [
+      3.4,
+      23.3,
+      21.5,
+      35.4,
+      22.8,
+      16.5,
+      2.9
+    ]
+  },
+  {
+    "id": "tnt003_0007",
+    "image": "images/tnt003_0007.png",
+    "mask": "masks/tnt003_0007.png",
+    "overlay": "overlays/tnt003_0007.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      157.0,
+      150.0,
+      73.0,
+      160.0,
+      220.0
+    ],
+    "lengths_um": [
+      15.7,
+      15.0,
+      7.3,
+      16.0,
+      22.0
+    ]
+  },
+  {
+    "id": "tnt003_0009",
+    "image": "images/tnt003_0009.png",
+    "mask": "masks/tnt003_0009.png",
+    "overlay": "overlays/tnt003_0009.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      161.0,
+      154.0,
+      72.0,
+      168.0,
+      226.0
+    ],
+    "lengths_um": [
+      16.1,
+      15.4,
+      7.2,
+      16.8,
+      22.6
+    ]
+  },
+  {
+    "id": "tnt003_0011",
+    "image": "images/tnt003_0011.png",
+    "mask": "masks/tnt003_0011.png",
+    "overlay": "overlays/tnt003_0011.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      165.0,
+      156.0,
+      72.0,
+      172.0,
+      232.0
+    ],
+    "lengths_um": [
+      16.5,
+      15.6,
+      7.2,
+      17.2,
+      23.2
+    ]
+  },
+  {
+    "id": "tnt004_0007",
+    "image": "images/tnt004_0007.png",
+    "mask": "masks/tnt004_0007.png",
+    "overlay": "overlays/tnt004_0007.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 4,
+    "lengths_px": [
+      188.0,
+      249.0,
+      295.0,
+      56.0
+    ],
+    "lengths_um": [
+      18.8,
+      24.9,
+      29.5,
+      5.6
+    ]
+  },
+  {
+    "id": "tnt004_0009",
+    "image": "images/tnt004_0009.png",
+    "mask": "masks/tnt004_0009.png",
+    "overlay": "overlays/tnt004_0009.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 4,
+    "lengths_px": [
+      193.0,
+      254.0,
+      301.0,
+      55.0
+    ],
+    "lengths_um": [
+      19.3,
+      25.4,
+      30.1,
+      5.5
+    ]
+  },
+  {
+    "id": "tnt004_0011",
+    "image": "images/tnt004_0011.png",
+    "mask": "masks/tnt004_0011.png",
+    "overlay": "overlays/tnt004_0011.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 4,
+    "lengths_px": [
+      199.0,
+      259.0,
+      307.0,
+      55.0
+    ],
+    "lengths_um": [
+      19.9,
+      25.9,
+      30.7,
+      5.5
+    ]
+  },
+  {
+    "id": "tnt005_0007",
+    "image": "images/tnt005_0007.png",
+    "mask": "masks/tnt005_0007.png",
+    "overlay": "overlays/tnt005_0007.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      212.0,
+      207.0,
+      175.0,
+      249.0,
+      164.0
+    ],
+    "lengths_um": [
+      21.2,
+      20.7,
+      17.5,
+      24.9,
+      16.4
+    ]
+  },
+  {
+    "id": "tnt005_0009",
+    "image": "images/tnt005_0009.png",
+    "mask": "masks/tnt005_0009.png",
+    "overlay": "overlays/tnt005_0009.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      214.0,
+      211.0,
+      179.0,
+      253.0,
+      165.0
+    ],
+    "lengths_um": [
+      21.4,
+      21.1,
+      17.9,
+      25.3,
+      16.5
+    ]
+  },
+  {
+    "id": "tnt005_0011",
+    "image": "images/tnt005_0011.png",
+    "mask": "masks/tnt005_0011.png",
+    "overlay": "overlays/tnt005_0011.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      213.0,
+      216.0,
+      187.0,
+      259.0,
+      164.0
+    ],
+    "lengths_um": [
+      21.3,
+      21.6,
+      18.7,
+      25.9,
+      16.4
+    ]
+  },
+  {
+    "id": "tnt006_0007",
+    "image": "images/tnt006_0007.png",
+    "mask": "masks/tnt006_0007.png",
+    "overlay": "overlays/tnt006_0007.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      114.0,
+      193.0,
+      123.0,
+      98.0,
+      118.0,
+      171.0,
+      118.0
+    ],
+    "lengths_um": [
+      11.4,
+      19.3,
+      12.3,
+      9.8,
+      11.8,
+      17.1,
+      11.8
+    ]
+  },
+  {
+    "id": "tnt006_0009",
+    "image": "images/tnt006_0009.png",
+    "mask": "masks/tnt006_0009.png",
+    "overlay": "overlays/tnt006_0009.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      118.0,
+      200.0,
+      123.0,
+      99.0,
+      120.0,
+      175.0,
+      118.0
+    ],
+    "lengths_um": [
+      11.8,
+      20.0,
+      12.3,
+      9.9,
+      12.0,
+      17.5,
+      11.8
+    ]
+  },
+  {
+    "id": "tnt006_0011",
+    "image": "images/tnt006_0011.png",
+    "mask": "masks/tnt006_0011.png",
+    "overlay": "overlays/tnt006_0011.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 7,
+    "lengths_px": [
+      114.0,
+      203.0,
+      122.0,
+      98.0,
+      119.0,
+      182.0,
+      118.0
+    ],
+    "lengths_um": [
+      11.4,
+      20.3,
+      12.2,
+      9.8,
+      11.9,
+      18.2,
+      11.8
+    ]
+  },
+  {
+    "id": "tnt007_0007",
+    "image": "images/tnt007_0007.png",
+    "mask": "masks/tnt007_0007.png",
+    "overlay": "overlays/tnt007_0007.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      248.0,
+      51.0,
+      122.0,
+      297.0,
+      220.0
+    ],
+    "lengths_um": [
+      24.8,
+      5.1,
+      12.2,
+      29.7,
+      22.0
+    ]
+  },
+  {
+    "id": "tnt007_0009",
+    "image": "images/tnt007_0009.png",
+    "mask": "masks/tnt007_0009.png",
+    "overlay": "overlays/tnt007_0009.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      247.0,
+      50.0,
+      120.0,
+      301.0,
+      219.0
+    ],
+    "lengths_um": [
+      24.7,
+      5.0,
+      12.0,
+      30.1,
+      21.9
+    ]
+  },
+  {
+    "id": "tnt007_0011",
+    "image": "images/tnt007_0011.png",
+    "mask": "masks/tnt007_0011.png",
+    "overlay": "overlays/tnt007_0011.png",
+    "um_per_pixel": 0.1,
+    "n_filaments": 5,
+    "lengths_px": [
+      247.0,
+      51.0,
+      124.0,
+      310.0,
+      218.0
+    ],
+    "lengths_um": [
+      24.7,
+      5.1,
+      12.4,
+      31.0,
+      21.8
+    ]
+  }
+]
