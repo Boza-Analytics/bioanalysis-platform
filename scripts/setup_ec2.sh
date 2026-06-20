@@ -113,14 +113,20 @@ pip install -e submodules/MedSAM3
 pip install -e submodules/SynthMT || echo "WARN: SynthMT editable install failed (non-fatal for MVP)"
 pip install -r requirements.txt
 
+# MedSAM3 pulls the latest torch (cu13x), which needs a driver newer than the
+# stock 535 (CUDA 12.2). Pin a CUDA 11.8 build that works with driver 535 on the
+# T4 and still satisfies torch>=2.7. Run LAST so it overrides the -e installs.
+pip install --force-reinstall torch==2.7.1 torchvision==0.22.1 \
+    --index-url https://download.pytorch.org/whl/cu118
+
 # --- 8. Download MedSAM3 weights (gated) -----------------------------------
 mkdir -p "${WEIGHTS_DIR}"
 if [ -f "${WEIGHTS_DIR}/best_lora_weights.pt" ]; then
     log "Weights already present — skipping download"
 elif [ -n "${HF_TOKEN}" ]; then
     log "Downloading MedSAM3 weights from Hugging Face"
-    huggingface-cli login --token "${HF_TOKEN}" --add-to-git-credential || true
-    huggingface-cli download lal-Joey/MedSAM3_v1 --local-dir "${WEIGHTS_DIR}"
+    # `huggingface-cli` is deprecated and no longer functional; use `hf`.
+    hf download lal-Joey/MedSAM3_v1 --local-dir "${WEIGHTS_DIR}" --token "${HF_TOKEN}"
 else
     echo "WARN: HF_TOKEN not set — skipping gated weight download." >&2
     echo "      The API will boot but /analyse returns 503 until weights exist at:" >&2
@@ -153,6 +159,10 @@ server {
 NGINX
 sudo ln -sf /etc/nginx/sites-available/bioanalysis /etc/nginx/sites-enabled/bioanalysis
 sudo rm -f /etc/nginx/sites-enabled/default
+# nginx (www-data) must be able to traverse /home/ubuntu (mode 0750) to read the
+# frontend; otherwise static requests 500 with "Permission denied".
+sudo chmod o+x /home/ubuntu "${PROJECT_DIR}" "${PROJECT_DIR}/frontend"
+sudo chmod o+r "${PROJECT_DIR}/frontend/index.html"
 sudo nginx -t
 sudo systemctl enable nginx
 sudo systemctl restart nginx
