@@ -1,4 +1,5 @@
 {
+  "use_frangi": false,
   "frangi_sigmas": [
     1,
     2,

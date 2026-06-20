@@ -34,6 +34,7 @@ CONFIG_PATH = Path(__file__).resolve().parent.parent / "configs" / "tnt_default.
 
 def _load_config() -> dict:
     defaults = {
+        "use_frangi": False,
         "frangi_sigmas": [1, 2, 3, 4],
         "sam_threshold": 0.35,
         "nms_iou": 0.5,
@@ -127,24 +128,27 @@ def run_tnt(
     """
     cfg = config or _load_config()
 
-    # 1. Frangi vesselness -> highlight thin filaments; save for SAM.
-    gray = _to_gray_float(image_path)
-    ridges = frangi(
-        gray,
-        sigmas=cfg["frangi_sigmas"],
-        black_ridges=False,
-    )
-    ridges_u8 = (np.clip(ridges, 0.0, 1.0) * 255).astype(np.uint8)
-    frangi_path = os.path.join(tempfile.gettempdir(), f"tnt_frangi_{uuid.uuid4().hex}.png")
-    Image.fromarray(ridges_u8).convert("RGB").save(frangi_path)
+    # 1. Optionally Frangi-enhance thin filaments before SAM.
+    #    On REAL micrographs Frangi turns the image into a ridge map that strips
+    #    away context and makes SAM segment noise ("random lines"), so it defaults
+    #    OFF — SAM3 runs directly on the original image. It helps mainly on the
+    #    clean synthetic data, where it can be re-enabled via use_frangi=true.
+    if cfg.get("use_frangi", False):
+        gray = _to_gray_float(image_path)
+        ridges = frangi(gray, sigmas=cfg["frangi_sigmas"], black_ridges=False)
+        ridges_u8 = (np.clip(ridges, 0.0, 1.0) * 255).astype(np.uint8)
+        sam_input = os.path.join(tempfile.gettempdir(), f"tnt_frangi_{uuid.uuid4().hex}.png")
+        Image.fromarray(ridges_u8).convert("RGB").save(sam_input)
+    else:
+        sam_input = image_path
 
-    # 2. SAM3 + LoRA text-prompted segmentation on the Frangi image.
+    # 2. SAM3 + LoRA text-prompted segmentation.
     if runner is None:
         from pipelines.medsam3_runner import get_runner
 
         runner = get_runner()
     seg = runner.predict(
-        frangi_path,
+        sam_input,
         prompt=cfg.get("sam_prompt", "thin line"),
         threshold=cfg["sam_threshold"],
         nms_iou=cfg["nms_iou"],
