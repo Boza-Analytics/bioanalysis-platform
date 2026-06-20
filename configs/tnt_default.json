@@ -8,11 +8,11 @@
     5,
     6
   ],
-  "sam_threshold": 0.25,
+  "sam_threshold": 0.3,
   "nms_iou": 0.5,
-  "sam_prompt": "membrane nanotube",
-  "min_tnt_length_px": 25,
+  "sam_prompt": "thin line",
+  "min_tnt_length_px": 15,
   "max_tnt_length_px": 1200,
-  "straightness_min": 0.5,
+  "straightness_min": 0.3,
   "border_margin_px": 0
 }
