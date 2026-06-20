@@ -19,6 +19,21 @@
     <!-- LEFT PANEL -->
     <section class="lg:w-1/3 w-full space-y-5">
 
+      <!-- Try an example (guaranteed-good demos) -->
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3">
+        <label class="block text-sm font-semibold mb-2 text-indigo-900">✨ Try an example (one click)</label>
+        <div class="flex flex-col gap-2">
+          <button id="sampleCxr" type="button"
+                  class="text-left text-sm bg-white border border-indigo-200 rounded-lg px-3 py-2 hover:bg-indigo-100 transition">
+            🫁 <b>Chest X-ray</b> → segment the <b>lungs</b> <span class="text-slate-400">(General)</span>
+          </button>
+          <button id="sampleTnt" type="button"
+                  class="text-left text-sm bg-white border border-indigo-200 rounded-lg px-3 py-2 hover:bg-indigo-100 transition">
+            🔬 <b>TNT microscopy</b> → detect &amp; measure <b>nanotubes</b> <span class="text-slate-400">(TNT)</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Dropzone -->
       <div>
         <label class="block text-sm font-semibold mb-2">1. Image</label>
@@ -316,6 +331,32 @@
       document.getElementById("placeholder").classList.remove("hidden");
       refreshRunBtn();
     });
+
+    // ---- One-click examples ----------------------------------------------
+    async function loadSample(url, mode, prompt) {
+      errorMsg.classList.add("hidden");
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error("could not load sample");
+        const blob = await resp.blob();
+        const file = new File([blob], url.split("/").pop(), { type: blob.type || "image/png" });
+        setFile(file);
+        const card = document.querySelector(`.mode-card[data-mode="${mode}"]`);
+        if (card) selectMode(mode, card);
+        if (prompt) document.getElementById("promptInput").value = prompt;
+        // let state settle, then auto-run
+        setTimeout(() => {
+          if (!document.getElementById("runBtn").disabled) document.getElementById("runBtn").click();
+        }, 150);
+      } catch (e) {
+        errorMsg.textContent = e.message;
+        errorMsg.classList.remove("hidden");
+      }
+    }
+    document.getElementById("sampleCxr").addEventListener("click",
+      () => loadSample("samples/chest_xray.png", "general", "lung"));
+    document.getElementById("sampleTnt").addEventListener("click",
+      () => loadSample("samples/tnt_microscopy.png", "tnt", null));
   </script>
 </body>
 </html>
