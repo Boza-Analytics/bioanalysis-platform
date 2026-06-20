@@ -34,13 +34,16 @@
       <div>
         <label class="block text-sm font-semibold mb-2">2. Analysis mode</label>
         <div id="modeCards" class="space-y-2"><!-- filled by JS --></div>
+        <p id="modeHint" class="text-xs mt-2 p-2 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hidden"></p>
       </div>
 
       <!-- Conditional: general prompt -->
       <div id="promptWrap" class="hidden">
-        <label class="block text-sm font-semibold mb-1">Prompt</label>
-        <input id="promptInput" type="text" placeholder='e.g. "tumor", "lung nodule"'
+        <label class="block text-sm font-semibold mb-1">What to find</label>
+        <input id="promptInput" type="text" placeholder="type a medical term, e.g. lung"
                class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+        <p class="text-xs text-slate-500 mt-1">Use a single anatomical / pathology term the model knows. Click a suggestion:</p>
+        <div id="promptChips" class="flex flex-wrap gap-1.5 mt-1.5"><!-- filled by JS --></div>
       </div>
 
       <!-- Conditional: TNT pixel size -->
@@ -125,7 +128,35 @@
       });
       document.getElementById("promptWrap").classList.toggle("hidden", id !== "general");
       document.getElementById("pixelWrap").classList.toggle("hidden", id !== "tnt");
+
+      // Per-mode guidance so users upload the right image / use the right prompt.
+      const hints = {
+        general: "Best mode for real medical images — X-ray, CT, MRI, ultrasound, microscopy. Type ONE term the model knows (see suggestions below). Plain phrases like \"broken bone\" won't match — use \"fracture\".",
+        tnt: "Expects fluorescence microscopy of thin filaments (bright lines on a dark background). Tuned on synthetic data — try the sample below first. It will NOT work on X-rays or photos.",
+        pla: "Expects fluorescence microscopy of cells with punctate spots. Won't work on X-rays or photos.",
+      };
+      const hintEl = document.getElementById("modeHint");
+      hintEl.textContent = hints[id] || "";
+      hintEl.classList.toggle("hidden", !hints[id]);
+
+      if (id === "general") renderPromptChips();
       refreshRunBtn();
+    }
+
+    // Suggested medical prompts that are known to work well (verified on real scans).
+    const PROMPT_SUGGESTIONS = ["lung", "heart", "rib", "spine", "fracture",
+      "bone", "liver", "kidney", "tumor", "lesion", "nodule", "vessel", "cell"];
+    function renderPromptChips() {
+      const wrap = document.getElementById("promptChips");
+      wrap.innerHTML = "";
+      PROMPT_SUGGESTIONS.forEach((p) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.textContent = p;
+        chip.className = "px-2 py-0.5 text-xs rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100";
+        chip.addEventListener("click", () => { document.getElementById("promptInput").value = p; });
+        wrap.appendChild(chip);
+      });
     }
 
     // ---- Dropzone ---------------------------------------------------------
@@ -242,7 +273,7 @@
             ${stat("Detections", r.num_detections)}
             ${stat("Prompt", r.prompt)}
           </div>
-          ${rows.length ? table(["#", "Confidence"], rows) : '<p class="text-sm text-slate-500 mt-3">No detections.</p>'}`;
+          ${rows.length ? table(["#", "Confidence"], rows) : '<p class="text-sm text-amber-700 mt-3">No detections for this term. Try a known concept word (e.g. <b>lung</b>, <b>fracture</b>, <b>liver</b>, <b>tumor</b>) and make sure the image is a medical scan.</p>'}`;
       }
 
       document.getElementById("placeholder").classList.add("hidden");
