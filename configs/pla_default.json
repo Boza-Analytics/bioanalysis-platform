@@ -1,0 +1,7 @@
+{
+  "sam_threshold": 0.5,
+  "sam_nms_iou": 0.5,
+  "blob_min_sigma": 1,
+  "blob_max_sigma": 4,
+  "blob_threshold": 0.1
+}

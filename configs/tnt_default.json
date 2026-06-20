@@ -1,0 +1,9 @@
+{
+  "frangi_sigmas": [1, 2, 3, 4],
+  "sam_threshold": 0.35,
+  "nms_iou": 0.5,
+  "min_tnt_length_px": 25,
+  "max_tnt_length_px": 1200,
+  "straightness_min": 0.6,
+  "border_margin_px": 0
+}

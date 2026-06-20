@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+.venv-test/
+*.egg-info/
+
+# Heavy upstream sources — re-cloned by scripts/setup_ec2.sh on deploy
+submodules/
+
+# Model weights (gated) and secrets
+submodules/MedSAM3/weights/
+*.pem
+.env
+*.token

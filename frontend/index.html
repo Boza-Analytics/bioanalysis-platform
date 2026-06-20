@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioAnalysis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+  <!-- Top bar -->
+  <header class="bg-slate-900 text-white px-6 py-4 flex items-baseline gap-3 shadow">
+    <h1 class="text-2xl font-bold tracking-tight">BioAnalysis</h1>
+    <span class="text-slate-400 text-sm">TNT &middot; PLA &middot; Medical Imaging</span>
+  </header>
+
+  <main class="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto">
+
+    <!-- LEFT PANEL -->
+    <section class="lg:w-1/3 w-full space-y-5">
+
+      <!-- Dropzone -->
+      <div>
+        <label class="block text-sm font-semibold mb-2">1. Image</label>
+        <div id="dropzone"
+             class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center cursor-pointer bg-white hover:border-slate-400 transition">
+          <input id="fileInput" type="file" accept="image/*" class="hidden" />
+          <p id="dropText" class="text-slate-500 text-sm">Drag &amp; drop an image here, or click to browse</p>
+          <img id="thumb" class="hidden mx-auto mt-2 max-h-40 rounded" />
+        </div>
+      </div>
+
+      <!-- Mode selector -->
+      <div>
+        <label class="block text-sm font-semibold mb-2">2. Analysis mode</label>
+        <div id="modeCards" class="space-y-2"><!-- filled by JS --></div>
+      </div>
+
+      <!-- Conditional: general prompt -->
+      <div id="promptWrap" class="hidden">
+        <label class="block text-sm font-semibold mb-1">Prompt</label>
+        <input id="promptInput" type="text" placeholder='e.g. "tumor", "lung nodule"'
+               class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+      </div>
+
+      <!-- Conditional: TNT pixel size -->
+      <div id="pixelWrap" class="hidden">
+        <label class="block text-sm font-semibold mb-1">Pixel size (µm/px) <span class="text-slate-400 font-normal">— optional</span></label>
+        <input id="pixelInput" type="number" step="any" min="0" placeholder="e.g. 0.065"
+               class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+      </div>
+
+      <!-- Run -->
+      <button id="runBtn" disabled
+              class="w-full bg-indigo-600 text-white font-semibold rounded-lg py-2.5 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+        <svg id="spinner" class="hidden animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z"></path>
+        </svg>
+        <span id="runLabel">Run analysis</span>
+      </button>
+      <p id="errorMsg" class="hidden text-sm text-red-600"></p>
+    </section>
+
+    <!-- RIGHT PANEL -->
+    <section class="lg:w-2/3 w-full">
+      <!-- Placeholder -->
+      <div id="placeholder" class="bg-white rounded-xl border border-slate-200 p-12 text-center text-slate-400">
+        <p class="text-lg font-medium">Results will appear here</p>
+        <p class="text-sm mt-2">Upload an image, pick a mode, and run the analysis.</p>
+      </div>
+
+      <!-- Results -->
+      <div id="results" class="hidden space-y-4">
+        <img id="overlayImg" class="w-full rounded-xl border border-slate-200" />
+        <div id="metrics" class="bg-white rounded-xl border border-slate-200 p-5"></div>
+        <div class="flex gap-3">
+          <button id="csvBtn" class="bg-emerald-600 text-white font-semibold rounded-lg px-4 py-2 hover:bg-emerald-700 transition">
+            Download results as CSV
+          </button>
+          <button id="resetBtn" class="bg-slate-200 text-slate-700 font-semibold rounded-lg px-4 py-2 hover:bg-slate-300 transition">
+            Reset
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = window.location.hostname === "localhost"
+      ? "http://localhost:8000"
+      : `http://${window.location.hostname}:8000`;
+
+    const state = { file: null, mode: null, result: null, response: null };
+
+    // ---- Mode cards -------------------------------------------------------
+    const fallbackModes = [
+      { id: "tnt", label: "Tunneling nanotubes", description: "Detects and measures TNT filaments between cells" },
+      { id: "pla", label: "PLA spot counting", description: "Counts proximity ligation assay spots per cell" },
+      { id: "general", label: "General medicine", description: "Text-prompted segmentation, 330 medical concepts" },
+    ];
+
+    const modeCards = document.getElementById("modeCards");
+    function renderModes(modes) {
+      modeCards.innerHTML = "";
+      modes.forEach((m) => {
+        const card = document.createElement("div");
+        card.dataset.mode = m.id;
+        card.className = "mode-card border border-slate-300 rounded-lg p-3 cursor-pointer bg-white hover:border-indigo-400 transition";
+        card.innerHTML = `<div class="font-semibold text-sm">${m.label}</div>
+                          <div class="text-xs text-slate-500">${m.description}</div>`;
+        card.addEventListener("click", () => selectMode(m.id, card));
+        modeCards.appendChild(card);
+      });
+    }
+    renderModes(fallbackModes);
+    fetch(`${API_BASE}/modes`).then((r) => r.json()).then(renderModes).catch(() => {});
+
+    function selectMode(id, card) {
+      state.mode = id;
+      document.querySelectorAll(".mode-card").forEach((c) => {
+        c.classList.toggle("ring-2", c === card);
+        c.classList.toggle("ring-indigo-500", c === card);
+        c.classList.toggle("border-indigo-500", c === card);
+      });
+      document.getElementById("promptWrap").classList.toggle("hidden", id !== "general");
+      document.getElementById("pixelWrap").classList.toggle("hidden", id !== "tnt");
+      refreshRunBtn();
+    }
+
+    // ---- Dropzone ---------------------------------------------------------
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("fileInput");
+    const thumb = document.getElementById("thumb");
+    const dropText = document.getElementById("dropText");
+
+    dropzone.addEventListener("click", () => fileInput.click());
+    dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("border-indigo-500"); });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("border-indigo-500"));
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("border-indigo-500");
+      if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener("change", () => { if (fileInput.files.length) setFile(fileInput.files[0]); });
+
+    function setFile(file) {
+      state.file = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        thumb.src = e.target.result;
+        thumb.classList.remove("hidden");
+        dropText.textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+      refreshRunBtn();
+    }
+
+    function refreshRunBtn() {
+      document.getElementById("runBtn").disabled = !(state.file && state.mode);
+    }
+
+    // ---- Run analysis -----------------------------------------------------
+    const runBtn = document.getElementById("runBtn");
+    const spinner = document.getElementById("spinner");
+    const runLabel = document.getElementById("runLabel");
+    const errorMsg = document.getElementById("errorMsg");
+
+    runBtn.addEventListener("click", async () => {
+      errorMsg.classList.add("hidden");
+      spinner.classList.remove("hidden");
+      runLabel.textContent = "Analysing…";
+      runBtn.disabled = true;
+
+      const fd = new FormData();
+      fd.append("file", state.file);
+      fd.append("mode", state.mode);
+      if (state.mode === "general") fd.append("prompt", document.getElementById("promptInput").value || "");
+      if (state.mode === "tnt") {
+        const px = document.getElementById("pixelInput").value;
+        if (px) fd.append("pixel_size_um", px);
+      }
+
+      try {
+        const resp = await fetch(`${API_BASE}/analyse`, { method: "POST", body: fd });
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err.detail || `Request failed (${resp.status})`);
+        }
+        state.response = await resp.json();
+        state.result = state.response.result;
+        renderResults();
+      } catch (e) {
+        errorMsg.textContent = e.message;
+        errorMsg.classList.remove("hidden");
+      } finally {
+        spinner.classList.add("hidden");
+        runLabel.textContent = "Run analysis";
+        refreshRunBtn();
+      }
+    });
+
+    // ---- Render results ---------------------------------------------------
+    function table(headers, rows) {
+      const head = headers.map((h) => `<th class="text-left px-2 py-1 border-b border-slate-200">${h}</th>`).join("");
+      const body = rows.map((r) => `<tr>${r.map((c) => `<td class="px-2 py-1 border-b border-slate-100">${c}</td>`).join("")}</tr>`).join("");
+      return `<table class="w-full text-sm mt-2"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+    }
+    function stat(label, value) {
+      return `<div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">${label}</div><div class="text-xl font-bold">${value}</div></div>`;
+    }
+
+    function renderResults() {
+      const r = state.result;
+      const mode = state.response.mode;
+      document.getElementById("overlayImg").src = `data:image/png;base64,${state.response.overlay_image}`;
+      const metrics = document.getElementById("metrics");
+
+      if (mode === "tnt") {
+        const hasUm = Array.isArray(r.lengths_um);
+        const rows = r.lengths_px.map((px, i) => hasUm ? [i + 1, px, r.lengths_um[i]] : [i + 1, px]);
+        const headers = hasUm ? ["#", "Length (px)", "Length (µm)"] : ["#", "Length (px)"];
+        metrics.innerHTML = `<h3 class="font-bold mb-3">TNT results</h3>
+          <div class="grid grid-cols-2 gap-3">
+            ${stat("Filaments detected", r.count)}
+            ${stat("Mean width (px)", r.mean_width_px)}
+          </div>
+          ${r.count > 0 ? table(headers, rows) : '<p class="text-sm text-slate-500 mt-3">No filaments detected.</p>'}`;
+      } else if (mode === "pla") {
+        const rows = r.spots_per_cell.map((s, i) => [i + 1, s]);
+        metrics.innerHTML = `<h3 class="font-bold mb-3">PLA results</h3>
+          <div class="grid grid-cols-3 gap-3">
+            ${stat("Total spots", r.total_spots)}
+            ${stat("Cells", r.cell_count)}
+            ${stat("Mean spots/cell", r.mean_spots)}
+          </div>
+          ${r.cell_count > 0 ? table(["Cell #", "Spots"], rows) : '<p class="text-sm text-slate-500 mt-3">No cells detected.</p>'}`;
+      } else {
+        const rows = (r.confidence_scores || []).map((s, i) => [i + 1, s]);
+        metrics.innerHTML = `<h3 class="font-bold mb-3">General segmentation</h3>
+          <div class="grid grid-cols-2 gap-3">
+            ${stat("Detections", r.num_detections)}
+            ${stat("Prompt", r.prompt)}
+          </div>
+          ${rows.length ? table(["#", "Confidence"], rows) : '<p class="text-sm text-slate-500 mt-3">No detections.</p>'}`;
+      }
+
+      document.getElementById("placeholder").classList.add("hidden");
+      document.getElementById("results").classList.remove("hidden");
+    }
+
+    // ---- CSV download -----------------------------------------------------
+    document.getElementById("csvBtn").addEventListener("click", () => {
+      const r = state.result, mode = state.response.mode;
+      let csv = "";
+      if (mode === "tnt") {
+        const hasUm = Array.isArray(r.lengths_um);
+        csv = hasUm ? "index,length_px,length_um\n" : "index,length_px\n";
+        r.lengths_px.forEach((px, i) => { csv += hasUm ? `${i + 1},${px},${r.lengths_um[i]}\n` : `${i + 1},${px}\n`; });
+        csv += `\nmean_width_px,${r.mean_width_px}\ncount,${r.count}\n`;
+      } else if (mode === "pla") {
+        csv = "cell_index,spots\n";
+        r.spots_per_cell.forEach((s, i) => { csv += `${i + 1},${s}\n`; });
+        csv += `\ntotal_spots,${r.total_spots}\ncell_count,${r.cell_count}\nmean_spots,${r.mean_spots}\n`;
+      } else {
+        csv = "index,confidence\n";
+        (r.confidence_scores || []).forEach((s, i) => { csv += `${i + 1},${s}\n`; });
+        csv += `\nprompt,${r.prompt}\nnum_detections,${r.num_detections}\n`;
+      }
+      const blob = new Blob([csv], { type: "text/csv" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `bioanalysis_${mode}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // ---- Reset ------------------------------------------------------------
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      state.file = null; state.result = null; state.response = null;
+      fileInput.value = "";
+      thumb.classList.add("hidden");
+      dropText.textContent = "Drag & drop an image here, or click to browse";
+      document.getElementById("results").classList.add("hidden");
+      document.getElementById("placeholder").classList.remove("hidden");
+      refreshRunBtn();
+    });
+  </script>
+</body>
+</html>

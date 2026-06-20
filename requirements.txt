@@ -1,0 +1,17 @@
+# BioAnalysis platform — API + pipeline dependencies.
+# NOTE: heavy ML deps (torch, transformers, sam3, lora_layers, etc.) are
+# installed via `pip install -e submodules/MedSAM3` (see scripts/setup_ec2.sh),
+# not duplicated here.
+
+# Web API
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.9
+
+# Image processing / measurement
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-image>=0.21.0
+Pillow>=10.0.0
+opencv-python-headless>=4.8.0
+matplotlib>=3.7.0
