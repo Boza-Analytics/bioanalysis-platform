@@ -1,10 +1,17 @@
 {
-  "frangi_sigmas": [1, 2, 3, 4],
-  "sam_threshold": 0.35,
+  "frangi_sigmas": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "sam_threshold": 0.25,
   "nms_iou": 0.5,
-  "sam_prompt": "thin line",
+  "sam_prompt": "membrane nanotube",
   "min_tnt_length_px": 25,
   "max_tnt_length_px": 1200,
-  "straightness_min": 0.6,
+  "straightness_min": 0.5,
   "border_margin_px": 0
 }
