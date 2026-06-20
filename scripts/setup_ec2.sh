@@ -46,16 +46,34 @@ sudo usermod -aG docker ubuntu || true
 
 # --- 3. NVIDIA driver + CUDA 12.1 toolkit ----------------------------------
 # Skipped automatically on non-GPU hosts (no NVIDIA PCI device present).
+# NOTE: torch's pip wheels (cu12x) bundle their own CUDA runtime, so all we
+# truly need from the host is a WORKING NVIDIA DRIVER.
 if lspci 2>/dev/null | grep -qi nvidia; then
-    log "Installing NVIDIA driver + CUDA 12.1 toolkit"
-    KEYRING=/usr/share/keyrings/cuda-archive-keyring.gpg
-    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub \
-        | sudo gpg --dearmor -o "${KEYRING}" || true
-    echo "deb [signed-by=${KEYRING}] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" \
-        | sudo tee /etc/apt/sources.list.d/cuda.list >/dev/null
-    sudo -E apt-get update -y
-    sudo -E apt-get install -y cuda-toolkit-12-1 nvidia-driver-535 || \
-        sudo -E apt-get install -y nvidia-cuda-toolkit
+    if nvidia-smi >/dev/null 2>&1; then
+        log "NVIDIA driver already working — skipping driver install"
+    else
+        log "Installing NVIDIA driver + CUDA 12.1 toolkit"
+        # The AWS HWE kernel (6.8-aws) is built with gcc-12. Ubuntu 22.04 defaults
+        # to gcc-11, which lacks '-ftrivial-auto-var-init=zero' and makes the
+        # NVIDIA dkms module build FAIL. Install gcc-12 and make it the default
+        # BEFORE the driver so the kernel module compiles cleanly.
+        sudo -E apt-get install -y gcc-12 "linux-headers-$(uname -r)"
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 60
+        sudo update-alternatives --set gcc /usr/bin/gcc-12
+
+        KEYRING=/usr/share/keyrings/cuda-archive-keyring.gpg
+        curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub \
+            | sudo gpg --dearmor -o "${KEYRING}" || true
+        echo "deb [signed-by=${KEYRING}] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" \
+            | sudo tee /etc/apt/sources.list.d/cuda.list >/dev/null
+        sudo -E apt-get update -y
+        sudo -E apt-get install -y cuda-toolkit-12-1 nvidia-driver-535 || \
+            sudo -E apt-get install -y nvidia-cuda-toolkit
+        # Ensure the dkms module is actually built/installed (idempotent).
+        sudo dpkg --configure -a || true
+        sudo modprobe nvidia 2>/dev/null || \
+            log "nvidia module not loaded yet — a reboot may be required before first use"
+    fi
 else
     log "No NVIDIA GPU detected — skipping CUDA install (CPU inference only)"
 fi
